@@ -14,12 +14,13 @@ public class PlayerController : MonoBehaviour
     public float speed = 3.0f;
 
 
-    // Variables related to the health system
     public int maxHealth = 5;
-    int currentHealth = 1;
-
+    int currentHealth = 1; 
     public int health { get { return currentHealth; }}
-    // Start is called before the first frame update
+    
+    public float timeInvincible = 2.0f;
+    bool isInvincible;
+    float damageCooldown;
     void Start()
     {
         MoveAction.Enable();
@@ -31,8 +32,17 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         move = MoveAction.ReadValue<Vector2>();
+
+        if (isInvincible)
+        {
+            damageCooldown -= Time.deltaTime;
+            if (damageCooldown < 0)
+            {
+                isInvincible = false;
+            }
+        }
     }
-    // FixedUpdate has the same call rate as the physics system
+
     void FixedUpdate()
     {
         Vector2 position = (Vector2)rigidbody2d.position + move * (speed * Time.deltaTime);
@@ -40,10 +50,18 @@ public class PlayerController : MonoBehaviour
     }
     public void ChangeHealth (int amount)
     {
+        if (amount < 0)
+        {
+            if (isInvincible)
+            {
+                return;
+            }
+            isInvincible = true;
+            damageCooldown = timeInvincible;
+        }
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        Debug.Log(currentHealth + "/" + maxHealth);
+        UIHandler.instance.SetHealthValue(currentHealth / (float)maxHealth);
     }
-
-
+    
 }
 
