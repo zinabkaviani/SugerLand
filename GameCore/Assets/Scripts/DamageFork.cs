@@ -2,14 +2,16 @@ using UnityEngine;
 
 public class DamageFork : MonoBehaviour
 {
+    public AudioClip DamageClip;
     private void OnTriggerEnter2D(Collider2D other)
     {
-        PlayerController controller = other.GetComponent<PlayerController>();
+        PlayerController playerController = other.GetComponent<PlayerController>();
 
-
-        if (controller != null && controller.health < 0)
+        if (playerController != null )
         {
-            controller.ChangeHealth(-1);
+            playerController.PlaySound(DamageClip);
+            playerController.ChangeHealth(-1);
+            Destroy(gameObject);
         }
     }
 }

@@ -2,13 +2,15 @@ using UnityEngine;
 
 public class CollectibleHealth : MonoBehaviour
 {
+    public AudioClip collectedClip;
     private void OnTriggerEnter2D(Collider2D other)
     {
-        PlayerController controller = other.GetComponent<PlayerController>();
+        PlayerController playerController = other.GetComponent<PlayerController>();
 
-        if (controller != null && controller.health < controller.maxHealth)
+        if (playerController != null && playerController.health < playerController.maxHealth)
         {
-            controller.ChangeHealth(1);
+            playerController.PlaySound(collectedClip);
+            playerController.ChangeHealth(1);
             Destroy(gameObject);
         }
     }
